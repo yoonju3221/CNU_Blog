@@ -1,0 +1,28 @@
+html {
+  height: 100%;
+}
+
+body {
+  width: 760px;
+  height: 100%;
+  margin: auto !important;
+}
+
+#root {
+  height: 100%;
+}
+
+a {
+  color: #222;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #222;
+  text-decoration: none;
+}
+
+a:link {
+  color: #222;
+  text-decoration: none;
+}
