@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IPostWithAd, IResponsePostList } from './types';
+import { IResponsePostList } from './types';
 
 const instance = axios.create({
   headers: {
