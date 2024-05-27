@@ -86,11 +86,73 @@ const SaveButton = styled.button`
 
 const Write = () => {
   // todo (5) 게시글 작성 페이지 만들기
+  const { state } = useLocation();
+  const isEdit = state?.postId;
+  const [title, setTitle] = useState('');
+  const [contents, setContents] = useState('');
+  const [tag, setTag] = useState<TAG>(() => {
+    return Object.keys(TAG)[0] as TAG;
+  });
+  const tagList = Object.keys(TAG);
+  const navigate = useNavigate();
+
+  const fetchPostById = async (postId: string) => {
+    const { data: post } = await getPostById(postId);
+    setTitle(post.title);
+    setContents(post.contents);
+    setTag(post.tag);
+  };
+
+  useEffect(() => {
+    if (isEdit) {
+      fetchPostById(state.postId);
+    }
+  }, []);
+  const requestCreatePost = async () => {
+    await createPost(title, contents, tag);
+  };
+
+  const requestUpdatePost = async () => {
+    await updatePostById(state.postId, title, contents, tag);
+  };
+  const clickConfirm = () => {
+    if (!title || !contents) {
+      alert('빈 값이 있습니다.');
+      return;
+    }
+    if (isEdit) {
+      requestUpdatePost();
+    } else {
+      requestCreatePost();
+    }
+    navigate('/');
+  };
+  const handleChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+  const handleChangeContents = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setContents(event.target.value);
+  };
+  const handleChangeTag = (event: ChangeEvent<HTMLSelectElement>) => {
+    setTag(event.target.value as TAG);
+  };
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      나는 글쓰기
-      <div style={{ height: 'calc(100% - 4rem)', paddingBottom: '4rem' }}>{/*todo (5-2) 제목 / 태그 셀렉 / 내용 입력란 추가*/}</div>
-      <BottomSheet>{/*todo (5-3) 나가기, 저장하기 버튼 추가*/}</BottomSheet>
+      <div style={{ height: 'calc(100% - 4rem)', paddingBottom: '4rem' }}>
+        <TitleInput placeholder="제목을 입력하세요" value={title} onChange={event => handleChangeTitle(event)} />
+        <TagSelect placeholder="태그를 선택하세요" value={tag} onChange={handleChangeTag}>
+          {tagList.map(tag => (
+            <option key={tag}>{tag}</option>
+          ))}
+        </TagSelect>
+        <Editor placeholder="내용을 입력하세요" value={contents} onChange={handleChangeContents} />
+      </div>
+      <BottomSheet>
+        <Link to="/">
+          <ExitButton>나가기</ExitButton>
+        </Link>
+        <SaveButton onClick={clickConfirm}>저장하기</SaveButton>
+      </BottomSheet>
     </div>
   );
 };
